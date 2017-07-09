@@ -36,7 +36,7 @@ This program also makes use of Peter Kovesi and Andrew Zisserman's MATLAB functi
 * Install GCO library. 
 	- Go to gco-v3.0/matlab directory. 
 	- Run GCO_UnitTest.m. The mex file should be compiled automatically. For more information, please see readme.txt file under gco-v3.0/matlab directory. 
-* Run 'make.m' file.
+* Run make.m file.
 
 ---------------
 2. Run examples
