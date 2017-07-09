@@ -21,9 +21,9 @@ trung.pham@adelaide.edu.au
 
 Last updated: 09 July 2017.
 
-————————-
+---
 0. Libraries
-—————————
+—
 This software uses the Multi-label optimization toolbox developed by Olga Veksler and Andrew Delong, which can be downloaded from http://vision.csd.uwo.ca/code/gco-v3.0.zip. We include this toolbox to our package.
 
 This program also makes use of Peter Kovesi and Andrew Zisserman's MATLAB functions for multi-view geometry
@@ -34,8 +34,8 @@ This program also makes use of Peter Kovesi and Andrew Zisserman's MATLAB functi
 ----------------------------
 * Uncompress the package.
 * Install GCO library. 
-... Go to gco-v3.0/matlab directory. 
-… Run GCO_UnitTest.m. The mex file should be compiled automatically. For more information, please see readme.txt file under gco-v3.0/matlab directory. 
+	- Go to gco-v3.0/matlab directory. 
+	- Run GCO_UnitTest.m. The mex file should be compiled automatically. For more information, please see readme.txt file under gco-v3.0/matlab directory. 
 * Run 'make.m' file.
 
 ---------------
