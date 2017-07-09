@@ -1,5 +1,5 @@
 
-#The Random Cluster Model for Geometric Model Fitting  
+# The Random Cluster Model for Geometric Model Fitting#
 
 This package contains the source code which implements robust geometric model fitting proposed in:
 
@@ -32,11 +32,11 @@ This program also makes use of Peter Kovesi and Andrew Zisserman's MATLAB functi
 ----------------------------
 1. Installation Instructions
 ----------------------------
-* Uncompress the package.
-* Install GCO library. 
-** Go to gco-v3.0/matlab directory. 
-** Run GCO_UnitTest.m. The mex file should be compiled automatically. For more information, please see readme.txt file under gco-v3.0/matlab directory. 
-* Run 'make.m' file.
+..* Uncompress the package.
+..* Install GCO library. 
+...* Go to gco-v3.0/matlab directory. 
+…*Run GCO_UnitTest.m. The mex file should be compiled automatically. For more information, please see readme.txt file under gco-v3.0/matlab directory. 
+..* Run 'make.m' file.
 
 ---------------
 2. Run examples
