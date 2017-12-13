@@ -29,7 +29,7 @@ http://www.cs.adelaide.edu.au/~{trung,tjchin}
 If you encounter any issues with the code, please feel free to contact me at:
 trung.pham@adelaide.edu.au
 
-Last updated: 09 July 2017.
+Last updated: 13 Dec 2017.
 
 ----------------------------
 0. Libraries
