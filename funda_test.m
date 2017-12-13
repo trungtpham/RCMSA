@@ -27,12 +27,12 @@ data = [ dat_img_1 ; dat_img_2 ];
 
 
 %----------Set parameters-------------------------------------------------%
-param.sig = 0.0025;             % Standard deviation of noise
+param.sig = 0.0025;           % Standard deviation of noise
 param.min_inliers = 25;       % Minimum number of inlier per structure
-param.rcm_sampling = 1;       % Used RCM sampling method
+param.rcm_sampling = 0;       % Used RCM sampling method
 param.sa    = 0.9;            % Simulated Annealing Schedule
-param.M     = 5000;           % Max number of iterations
-param.K     = 100;             % Patch size to update the weight
+param.M     = 10000;           % Max number of iterations
+param.K     = 100;            % Patch size to update the weight
 %-------------------------------------------------------------------------%
 
 %---Robust model fitting--------------------------------------------------%

@@ -53,7 +53,7 @@ weight      = zeros(ne,1);
 weight(:,1) = 0.25;              % All weights are initalised to 0.25
 %-------------------------------------------------------------------------%
 
-smoothcost = 0.01;      % Smooth cost 
+smoothcost = 0.1;      % Smooth cost 
 r0         = ones(1,N);    % Residual for dummy model (outlier model)
 res(:,1)   = r0;           % Put outlier cost to residual pool
 f          = ones(N,1);    % f is hidden label variables
@@ -67,7 +67,7 @@ epar       = [];           % Estimated paramters
 
 %--------Simulated annealing to minimise energy---------------------------%
 % Inited temperature 
-T = 1;
+T = 1000;
 
 % Loop through a number of iteration
 %cpu_time = [];
@@ -152,6 +152,7 @@ for m=1:M
     
     % Save history of energies
     eng(m) = J;
+    
     % Decrease temperature
     T = T*param.sa;
     
@@ -163,7 +164,7 @@ for m=1:M
     % Check convergence
     % A more complicated convergence criteria can be used
     if m>200 && std(eng(m-200:m)) < 0.001
-        %break;
+        break;
     end
    
 end
@@ -176,7 +177,7 @@ if size(epar,2)>1 && sum(epar(:,1))==0
 end
 toc;
 % Display energy evolution
-%figure(10); plot(eng);
+% figure(10); plot(eng);drawnow;
 
 end
 
@@ -227,8 +228,8 @@ y = new_data(:,2);
 %y = data(:,2);
 
 % Create adjacency graph using Delaunay Triangulation
-dt = delaunay(x,y);
 warning('off','all')
+dt = delaunay(x,y);
 trep = triangulation(dt, x, y);
 
 % Get a set of edges

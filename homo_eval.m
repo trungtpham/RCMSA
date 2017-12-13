@@ -34,8 +34,8 @@ for f=1:length(data_files)
     param.sig = 0.03;             % Standard deviation of noise
     param.min_inliers = 10;       % Minimum number of inlier per structure
     param.rcm_sampling = 1;       % Used RCM sampling method
-    param.sa    = 0.9;            % Simulated Annealing Schedule
-    param.M     = 2000;           % Max number of iterations
+    param.sa    = 0.99;            % Simulated Annealing Schedule
+    param.M     = 5000;           % Max number of iterations
     param.K     = 100;             % Patch size to update the weight
     %-------------------------------------------------------------------------%
     

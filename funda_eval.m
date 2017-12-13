@@ -31,12 +31,12 @@ for f=1:length(data_files)
     
     
     %----------Set parameters-------------------------------------------------%
-    param.sig = 0.0025;           % Standard deviation of noise
-    param.min_inliers = 25;       % Minimum number of inlier per structure
+    param.sig = 0.00025;           % Standard deviation of noise
+    param.min_inliers = 20;       % Minimum number of inlier per structure
     param.rcm_sampling = 1;       % Used RCM sampling method
-    param.sa    = 0.9;            % Simulated Annealing Schedule
-    param.M     = 2000;           % Max number of iterations
-    param.K     = 100;            % Patch size to update the weight
+    param.sa    = 0.99;            % Simulated Annealing Schedule
+    param.M     = 5000;           % Max number of iterations
+    param.K     = 10;            % Patch size to update the weight
     %-------------------------------------------------------------------------%
     
     %---Robust model fitting--------------------------------------------------%

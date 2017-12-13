@@ -29,8 +29,8 @@ h = GCO_Create(n,num_hyp);
 
 % Uniform cost is used for all label pairs
 S = ~eye(num_hyp);
-S(1,:) = 0.1;
-S(:,1) = 0.1;
+S(1,:) = 0.001;
+S(:,1) = 0.001;
 GCO_SetSmoothCost(h,int32(smoothcost.*S));
 
 % Set neighbors
