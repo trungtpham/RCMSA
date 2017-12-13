@@ -105,6 +105,7 @@
 #error Requires Visual C++ 2005 (VC8) compiler or later.
 #endif
 
+#include <cstddef>
 #include "energy.h"
 #include "graph.cpp"
 #include "maxflow.cpp"
@@ -141,6 +142,13 @@ extern "C" gcoclock_t GCO_CLOCKS_PER_SEC; // this variable will stay 0 until gco
                                      // the library will raise an exception
 #endif
 
+#if defined(GCO_ENERGYTYPE) && !defined(GCO_ENERGYTERMTYPE)
+#define GCO_ENERGYTERMTYPE GCO_ENERGYTYPE
+#endif
+#if !defined(GCO_ENERGYTYPE) && defined(GCO_ENERGYTERMTYPE)
+#define GCO_ENERGYTYPE GCO_ENERGYTERMTYPE
+#endif
+
 
 /////////////////////////////////////////////////////////////////////
 // GCoptimization class
@@ -150,12 +158,17 @@ class LinkedBlockList;
 class GCoptimization
 {
 public: 
+#ifdef GCO_ENERGYTYPE
+	typedef GCO_ENERGYTYPE EnergyType;
+	typedef GCO_ENERGYTERMTYPE EnergyTermType;
+#else
 #ifdef GCO_ENERGYTYPE32
 	typedef int EnergyType;        // 32-bit energy total
 #else
 	typedef long long EnergyType;  // 64-bit energy total
 #endif
 	typedef int EnergyTermType;    // 32-bit energy terms
+#endif
 	typedef Energy<EnergyTermType,EnergyTermType,EnergyType> EnergyT;
 	typedef EnergyT::Var VarID;
 	typedef int LabelID;                     // Type for labels
@@ -369,7 +382,7 @@ protected:
 	};
 
 	struct SmoothCostFnPotts {
-		OLGA_INLINE EnergyTermType compute(SiteID, SiteID, LabelID l1, LabelID l2){return l1 != l2 ? 1 : 0;}
+		OLGA_INLINE EnergyTermType compute(SiteID, SiteID, LabelID l1, LabelID l2){return l1 != l2 ? (EnergyTermType)1 : (EnergyTermType)0;}
 	};
 
 	/////////////////////////////////////////////////////////////////////

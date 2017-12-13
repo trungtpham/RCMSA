@@ -11,6 +11,16 @@ T. T. Pham, T.-J. Chin, J. Yu and D. Suter
 The Random Cluster Model for Robust Geometric Fitting
 IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI).
 
+Related papers:
+
+T. T. Pham, T.-J. Chin, K. Schindler and D. Suter,
+Interacting Geometric Priors for Robust Multi-Model Fitting
+IEEE Transactions on Image Processing
+
+T. T. Pham, T.-J. Chin, J. Yu and D. Suter
+Simultaneous Sampling and Multi-Structure Fitting with Adaptive Reversible Jump MCMC
+In NIPS 2011, Granada, Spain.
+
 Copyright (c) 2012 Trung T. Pham and Tat-Jun Chin
 School of Computer Science, The University of Adelaide, South Australia
 The Australian Center for Visual Technologies

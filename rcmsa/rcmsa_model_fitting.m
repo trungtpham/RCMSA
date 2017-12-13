@@ -1,5 +1,5 @@
 
-function [epar elabel] = rcmsa_model_fitting(data, xy, model_type, param)
+function [epar, elabel] = rcmsa_model_fitting(data, xy, model_type, param)
 % function [epar elabel] = rcmsa_model_fitting(data, xy, model_type, param)
 % estimate the mutiple instaces of a geometric model given the input data.
 % Input
@@ -22,8 +22,12 @@ function [epar elabel] = rcmsa_model_fitting(data, xy, model_type, param)
 tic;
 %-------------------------------------------------------------------------%
 
+
+%---Compute model complexity beta parameter-------------------------------%
+param.bet = param.min_inliers;
+
 %------Get model parameters-----------------------------------------------%
-[fitfn resfn degenfn psize numpar] = getModelPara(model_type);
+[fitfn, resfn, degenfn, psize, numpar] = getModelPara(model_type);
 %-------------------------------------------------------------------------%
 
 %-------Parameters--------------------------------------------------------%
@@ -40,23 +44,20 @@ eng = zeros(M,1);             % Engeries allocation
 [edge] = adjacenygraph(xy);     % Create graph
 ne     = length(edge);          % Number of edges
 E      = sparse(edge(:,1),edge(:,2),ones(ne,1),N,N); % Sparse adjacency matrix
-E      = E + E';                % Make symmetric.
 %-------------------------------------------------------------------------%
 
 
 %-------------------------Initialisation----------------------------------%
 %-------------------------Edge weights------------------------------------%
 weight      = zeros(ne,1);
-weight(:,1) = 0.3;              % All weights are initalised to 0.3
+weight(:,1) = 0.25;              % All weights are initalised to 0.25
 %-------------------------------------------------------------------------%
 
-smoothcost = 1e2;          % Smooth cost 
-res_scale  = 10e6;         % Residual Scale
-r0         = zeros(1,N);   % Residual for dummy model (outlier model)
-r0(:)      = 2*param.sig;  % Residual for dummy model (outlier model)
+smoothcost = 0.01;      % Smooth cost 
+r0         = ones(1,N);    % Residual for dummy model (outlier model)
 res(:,1)   = r0;           % Put outlier cost to residual pool
 f          = ones(N,1);    % f is hidden label variables
-J          = (sum(r0)^2)*res_scale + param.bet*N; % Current Energy
+J          = sum(r0) + param.bet; % Current Energy
 lnew       = 1;            % New label
 dcost      = res(:,1);     % Current data cost
 numm       = 1;            % Current number of models
@@ -66,16 +67,16 @@ epar       = [];           % Estimated paramters
 
 %--------Simulated annealing to minimise energy---------------------------%
 % Inited temperature 
-T = 1; 
+T = 1;
 
 % Loop through a number of iteration
-cpu_time =[];
-est_pars = {};
+%cpu_time = [];
+%est_pars = {};
 for m=1:M
     
     % Random select birth and death process
     % If the number of model is less than 2, choose 'birth'
-    if numm <  3
+    if numm < 3
         toss = 1;
     else
         toss = randsample(2,1, 'true', mv);
@@ -88,11 +89,16 @@ for m=1:M
         
         % Sample a new hypothesis
         % Sample a connected component R using RCM method
-        [V_R] = rcm_sampling(data, psize,degenfn,f,edge,weight,pcost);
+        if param.rcm_sampling == 1
+            V_R = rcm_sampling(data, psize,degenfn,f,edge,weight,pcost);
+        else
+            V_R = random_sampling(data, psize, degenfn);
+        end
         
         % Compute putative model and residuals
         p = feval(fitfn,data(:, V_R));
         r = feval(resfn,p,data);
+        r = r./param.sig;
         
         % Save to parameter and residual pool
         p = reshape(p, numpar, 1);
@@ -101,6 +107,7 @@ for m=1:M
         
         % Add to the current configuration
         dcost_temp = [dcost r];
+        epar_temp = [epar p];
         numm_temp = numm + 1;
         
     else % Do Death Process
@@ -110,16 +117,18 @@ for m=1:M
         
         % Remove from the current configuration
         dcost_temp = dcost;
-        dcost_temp(:,a) =[];
+        dcost_temp(:,a) = [];
+        epar_temp = epar;
+        epar_temp(:, a-1) = [];
         numm_temp = numm - 1;
         
     end
     
     % Extract labels based on alpha_expansion method
-    [f_temp J_temp pcost] = get_labels(E, dcost_temp, res_scale, smoothcost);
+    [f_temp, J_temp, pcost] = get_labels(E, dcost_temp, smoothcost);
     
     % Compute the new energy
-    J_temp = double(J_temp + numm_temp*N*param.bet);
+    J_temp = double(J_temp + numm_temp*param.bet);
     
     % Calculate acceptance probability           
     alpha = exp((-J_temp + J)/T);
@@ -127,14 +136,18 @@ for m=1:M
     % Accept new configuration probabilistically
     if rand < alpha
         % Accept and do local refinement
-        epar = par(:, unique(f_temp));
-        [epar dcost] = local_refine(data, epar, dcost_temp, f_temp, numm_temp, psize, fitfn, resfn, numpar);
-        
+        [epar, dcost] = local_refine(data, f_temp, epar_temp, dcost_temp, numm_temp, psize, fitfn, resfn, numpar, param.sig);
+                
         % Re-compute labels and energy
-        numm = numm_temp;
-        [f J pcost] = get_labels(E, dcost, res_scale, smoothcost);
-        J = double(J + numm*N*param.bet);
+        [f, J, pcost] = get_labels(E, dcost, smoothcost);
         
+        % Current number of models
+        ulabels = unique(f);
+        numm = length(ulabels);
+        dcost = dcost(:, ulabels);
+        ulabels = setdiff(ulabels, 1);
+        epar = epar(:, ulabels - 1);
+        J = double(J + numm*param.bet);      
     end
     
     % Save history of energies
@@ -149,21 +162,21 @@ for m=1:M
    
     % Check convergence
     % A more complicated convergence criteria can be used
-    if m>200 && std(eng(m-200:m)) < 0.01
-    %    break;
+    if m>200 && std(eng(m-200:m)) < 0.001
+        %break;
     end
    
 end
 
 %---- End of Simulated Annealing Optimisation-----------------------------%
 % Output estimated parameters
-elabel    = f;
+elabel = f;
 if size(epar,2)>1 && sum(epar(:,1))==0
     epar(:,1) = []; % Remove outlier model
 end
-toc; 
+toc;
 % Display energy evolution
-% plot(eng);
+%figure(10); plot(eng);
 
 end
 
@@ -203,16 +216,20 @@ function [edge] = adjacenygraph(data)
 data = data'; 
 
 % Use PCA to extract the first two principle components
-[pc,score,latent,tsquare] = princomp(data);
+[pc,~,~,~] = pca(data);
 
 % Project data to the first two principle components
 new_data = data*pc(:,1:2);
-x= new_data(:,1);
-y= new_data(:,2);
+x = new_data(:,1);
+y = new_data(:,2);
+
+%x = data(:,1);
+%y = data(:,2);
 
 % Create adjacency graph using Delaunay Triangulation
 dt = delaunay(x,y);
-trep = TriRep(dt, x, y);
+warning('off','all')
+trep = triangulation(dt, x, y);
 
 % Get a set of edges
 edge = edges(trep);
@@ -220,7 +237,7 @@ edge = edges(trep);
 end
 
 % This function is used to refine the current parameters
-function [epar dcost] = local_refine(data, epar, dcost, label, numm, psize, fitfn, resfn, npar)
+function [epar, dcost] = local_refine(data, label, epar, dcost, numm, psize, fitfn, resfn, npar, sig)
 
 % Loop through number of models
 % The first model is (often) an outlier (dummy) model
@@ -230,10 +247,14 @@ for n=2:numm
     % Check whether model is valid
     if sum(pts) >= psize
         p = feval(fitfn,data(:, pts));
+        if (isempty(p))
+            continue;
+        end
         p = reshape(p, npar, 1);
         if length(p) == npar
             r = feval(resfn,p,data);
-            epar(:,n)  = p;
+            r = r./sig;
+            epar(:,n-1)  = p;
             dcost(:,n) = r;
         end
     end       
