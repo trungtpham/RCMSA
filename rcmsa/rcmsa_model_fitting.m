@@ -1,5 +1,5 @@
 
-function [epar, elabel] = rcmsa_model_fitting(data, xy, model_type, param)
+function [epar, elabel, energy] = rcmsa_model_fitting(data, xy, model_type, param)
 % function [epar elabel] = rcmsa_model_fitting(data, xy, model_type, param)
 % estimate the mutiple instaces of a geometric model given the input data.
 % Input
@@ -18,10 +18,6 @@ function [epar, elabel] = rcmsa_model_fitting(data, xy, model_type, param)
 % epar : Estimated parameters
 % label: Segmentation
 
-%---Measure computing time------------------------------------------------%
-tic;
-%-------------------------------------------------------------------------%
-
 
 %---Compute model complexity beta parameter-------------------------------%
 param.bet = param.min_inliers;
@@ -37,7 +33,7 @@ K   = param.K;                % Patch size to update the weights
 mv  = [0.5 0.5];              % Birth and death probabilities
 par = zeros(numpar,M*mv(1));  % Parameters allocation
 res = zeros(N, M*mv(1));      % Residuals allocation
-eng = zeros(M,1);             % Engeries allocation
+energy = zeros(M,1);             % Engeries allocation
 %-------------------------------------------------------------------------%
 
 %------------Create Adjacency Graph by Delaunay triagulation--------------%
@@ -67,7 +63,7 @@ epar       = [];           % Estimated paramters
 
 %--------Simulated annealing to minimise energy---------------------------%
 % Inited temperature 
-T = 1000;
+T = 250;
 
 % Loop through a number of iteration
 %cpu_time = [];
@@ -151,8 +147,8 @@ for m=1:M
     end
     
     % Save history of energies
-    eng(m) = J;
-    
+    energy(m) = J;
+ 
     % Decrease temperature
     T = T*param.sa;
     
@@ -163,21 +159,20 @@ for m=1:M
    
     % Check convergence
     % A more complicated convergence criteria can be used
-    if m>200 && std(eng(m-200:m)) < 0.001
+    if m>200 && std(energy(m-200:m)) < 0.001
         break;
     end
-   
 end
 
 %---- End of Simulated Annealing Optimisation-----------------------------%
+% Remove small structures
+counts = histc(f, unique(f));
+ids = find(counts < param.min_inliers);
+epar(:,ids-1) = [];
+f(ismember(f,ids)) = 1;
 % Output estimated parameters
 elabel = f;
-if size(epar,2)>1 && sum(epar(:,1))==0
-    epar(:,1) = []; % Remove outlier model
-end
-toc;
-% Display energy evolution
-% figure(10); plot(eng);drawnow;
+energy = energy(1:m);
 
 end
 
@@ -214,6 +209,7 @@ function [edge] = adjacenygraph(data)
 % edges: a list of connected edges
 
 % Transpose data
+data([3, 6],:) = [];
 data = data'; 
 
 % Use PCA to extract the first two principle components
@@ -224,9 +220,6 @@ new_data = data*pc(:,1:2);
 x = new_data(:,1);
 y = new_data(:,2);
 
-%x = data(:,1);
-%y = data(:,2);
-
 % Create adjacency graph using Delaunay Triangulation
 warning('off','all')
 dt = delaunay(x,y);
@@ -234,6 +227,17 @@ trep = triangulation(dt, x, y);
 
 % Get a set of edges
 edge = edges(trep);
+
+% Remove far-away edge
+dis = pdist(new_data);
+median_dis = median(dis);
+dis = squareform(dis);
+I = dis<median_dis;
+A = sparse(edge(:,1), edge(:,2), 1, length(data), length(data));
+A = A.*I;
+
+[i, j] = find(A);
+edge = [i, j];
 
 end
 
