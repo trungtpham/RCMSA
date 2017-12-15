@@ -2,7 +2,6 @@ function [label, eng, pcost] = get_labels(graph, datacost, smoothcost)
 % Input
 % graph [NxN]     : represents a sparse adjacency matrix
 % datacost [NxL]  : contains cost of N points w.r.t L labels
-% datacost_scale  : scale of data cost
 % smoothcost      : smoothness cost of the MRF model 
 
 % Output
@@ -12,12 +11,12 @@ function [label, eng, pcost] = get_labels(graph, datacost, smoothcost)
 
 
 % energy scale required by GCO
-energy_scale = 1e3;
+energy_scale = 1e2;
 
 % Make squared residual
 datacost = datacost.^2;
 
-smoothcost = smoothcost.*energy_scale;
+smoothcost = min(1e7, smoothcost.*energy_scale);
 datacost = min(1e7, datacost.*energy_scale);
 
 % Label initalisation
@@ -29,9 +28,6 @@ h = GCO_Create(n,num_hyp);
 
 % Uniform cost is used for all label pairs
 S = ~eye(num_hyp);
-% This discourage smoothness between an outlier and inlier.
-S(1,:) = 0.001;
-S(:,1) = 0.001;
 GCO_SetSmoothCost(h,int32(smoothcost.*S));
 
 % Set neighbors

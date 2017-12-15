@@ -1,4 +1,4 @@
-function [V_R]  = rcm_sampling(data, psize, degenfn, f, e, q, cost)
+function [V_R]  = rcm_sampling(data, pdata, psize, degenfn, f, e, q, cost)
 % Follows Swendsen-Wang cut of Barbu and Zhu.
 %-------
 % Input:

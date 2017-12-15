@@ -29,7 +29,7 @@ http://www.cs.adelaide.edu.au/~{trung,tjchin}
 If you encounter any issues with the code, please feel free to contact me at:
 trung.pham@adelaide.edu.au
 
-Last updated: 13 Dec 2017.
+Last updated: 15 Dec 2017.
 
 ----------------------------
 0. Libraries
@@ -51,24 +51,11 @@ This program also makes use of Peter Kovesi and Andrew Zisserman's MATLAB functi
 ---------------
 2. Run examples
 ---------------
-* Run homo_est.m for multiple planar homography detection.
-* Run funda_est.m for multiple 2-view motion segmentation.
+* Run homo_est.m for example multiple planar homography detection.
+* Run funda_est.m for example multiple 2-view motion segmentation.
+* Run homo_eval.m to test the method using AdelaideRMF dataset.
+* Run funda_eval.m to test the method using AdelaideRMF dataset.
 
-Users are able to test other datasets by changing the data name manually in the funda_test.m or homo_test.m files. 
-
-Note: We have tested the code under Linux (Ubuntu) and Mac.  
-
-
------------
-3. License
------------
-The program is free for non-commercial academic use. Any commercial use is strictly prohibited without the authors' consent. Please acknowledge the authors by citing the above paper in any academic publications that have made use of this package or part of it.
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
-
-    * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution
-      
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Note: We have tested the code under Ubuntu 16.04 and Matlab R2017a.
 
 

@@ -32,7 +32,7 @@ for f=1:length(data_files)
     
     
     %----------Set parameters-------------------------------------------------%
-    param.sig = 0.03;             % Standard deviation of noise
+    param.sig = 0.05;             % Standard deviation of noise
     param.min_inliers = 10;       % Minimum number of inlier per structure
     param.rcm_sampling = 1;       % Used RCM sampling method
     param.sa    = 0.99;           % Simulated Annealing Schedule
