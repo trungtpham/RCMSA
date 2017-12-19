@@ -28,7 +28,7 @@ param.bet = 1.25*param.min_inliers;
 
 %-------Parameters--------------------------------------------------------%
 N   = size(data,2);           % Number of data points
-M   = param.M;                % Number of iterations
+M   = param.max_iteration;    % Number of iterations
 K   = param.K;                % Patch size to update the weights
 mv  = [0.5 0.5];              % Birth and death probabilities
 par = zeros(numpar,M*mv(1));  % Parameters allocation
@@ -37,7 +37,7 @@ energy = zeros(M,1);             % Engeries allocation
 %-------------------------------------------------------------------------%
 
 %------------Create Adjacency Graph by Delaunay triagulation--------------%
-[Edges, Weights, pdata] = adjacenygraph(xy);     % Create graph
+[Edges, Weights, ~] = adjacenygraph(xy);     % Create graph
 num_edges     = length(Edges);          % Number of edges
 linearInd = sub2ind(size(Weights), Edges(:,1), Edges(:,2));
 spatial_weights = Weights(linearInd);
@@ -51,7 +51,7 @@ sampling_weights(:,1) = 0.25;              % All weights are initalised to 0.25
 learnt_weights = sampling_weights;
 %-------------------------------------------------------------------------%
 
-smoothcost = 100000;        % Smooth cost 
+smoothcost = param.smoothness;          % Smooth cost 
 r0         = ones(1,N);    % Residual for dummy model (outlier model)
 res(:,1)   = r0;           % Put outlier cost to residual pool
 f          = ones(N,1);    % f is hidden label variables
@@ -65,7 +65,7 @@ epar       = [];           % Estimated paramters
 
 %--------Simulated annealing to minimise energy---------------------------%
 % Inited temperature 
-T = 250;
+T = 200;
 
 % Loop through a number of iteration
 %cpu_time = [];
@@ -88,8 +88,8 @@ for m=1:M
         % Sample a new hypothesis
         % Sample a connected component R using RCM method
         if param.rcm_sampling == 1           
-            sampling_weights = 0.25*learnt_weights + 0.75*spatial_weights;
-            V_R = rcm_sampling(data, pdata, psize,degenfn,f,Edges,sampling_weights,pcost);
+            sampling_weights = 1.0*learnt_weights + 0.0*spatial_weights;
+            V_R = rcm_sampling(data, psize,degenfn,f,Edges,sampling_weights,pcost);
         else
             V_R = random_sampling(data, psize, degenfn);
         end
@@ -152,7 +152,6 @@ for m=1:M
     
     % Save history of energies
     energy(m) = J;
- 
     % Decrease temperature
     T = T*param.sa;
     
@@ -163,7 +162,7 @@ for m=1:M
    
     % Check convergence
     % A more complicated convergence criteria can be used
-    if m>200 && std(energy(m-200:m)) < 0.001
+    if m>param.min_iteration && abs(energy(m) - energy(m-300)) < 1
         break;
     end
 end
@@ -240,8 +239,8 @@ I = dis<median_dis;
 A = sparse(E(:,1), E(:,2), 1, length(data), length(data));
 A = A.*I;
 
-W =  exp(-(dis.^2)/(10^2));
-W = full(W.*A);
+W = full(A);
+
 [i, j] = find(A);
 E = [i, j];
 P  = new_data(:,1:2);

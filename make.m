@@ -2,6 +2,7 @@
 addpath('model_specific');
 addpath('gco-v3.0');
 addpath('rcmsa');
+addpath('utils');
 addpath('gco-v3.0/matlab');
 %-------------------------------------------------------------------------%
 

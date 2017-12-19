@@ -28,17 +28,19 @@ h = GCO_Create(n,num_hyp);
 
 % Uniform cost is used for all label pairs
 S = ~eye(num_hyp);
-GCO_SetSmoothCost(h,int32(smoothcost.*S));
+S = S*2;
+S(1,2:end) = 1;
+S(2:end,1) = 1;
+GCO_SetSmoothCost(h,int32(S));
 
 % Set neighbors
-GCO_SetNeighbors(h,graph);
+GCO_SetNeighbors(h,(smoothcost.*graph));
 
 % Set data cost
 GCO_SetDataCost(h,int32(datacost'));
-%GCO_SetLabelCost(h,int32(0)); 
+%GCO_SetLabelCost(h,int32(0));
 % Set labels
 GCO_SetLabeling(h,ilabel)
-
 
 % run alpha-expansion
 GCO_Expansion(h);                

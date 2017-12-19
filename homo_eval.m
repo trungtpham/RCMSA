@@ -1,6 +1,5 @@
 clear
 close all
-clc
 
 %-------------------------------------------------------------------------%
 model_type = 'homography';
@@ -10,6 +9,8 @@ data_path = 'data/AdelaideRMF/H';
 
 data_files = dir(data_path);
 data_files(1:2) = [];
+num_repetitions = 100;
+seg_errors = zeros(length(data_files), num_repetitions);
 
 for f=1:length(data_files)
     
@@ -33,17 +34,24 @@ for f=1:length(data_files)
     
     %----------Set parameters-------------------------------------------------%
     param.sig = 0.05;             % Standard deviation of noise
+    param.smoothness = 0.1;       % Smoothness cost
     param.min_inliers = 10;       % Minimum number of inlier per structure
     param.rcm_sampling = 1;       % Used RCM sampling method
     param.sa    = 0.99;           % Simulated Annealing Schedule
-    param.M     = 5000;           % Max number of iterations
-    param.K     = 100;            % Patch size to update the weight
+    param.max_iteration = 5000;   % Max number of iterations
+    param.min_iteration = 500;   % Min number of iterations
+    param.K     = 10;            % Patch size to update the weight
     %-------------------------------------------------------------------------%
     
     %---Robust model fitting--------------------------------------------------%
-    [estimated_pars, segmentation, energy] = rcmsa_model_fitting(data, xy, model_type, param);
-    %-------------------------------------------------------------------------%
     
+    for i=1:num_repetitions
+        [estimated_pars, segmentation, ~] = rcmsa_model_fitting(data, xy, model_type, param);
+        % Evaluation
+        seg_errors(f, i) = segmentation_error(segmentation, GT); 
+    end
+    fprintf('Median error = %f \n', median(seg_errors(f,:)));
+    %-------------------------------------------------------------------------%
     
     %--Display segmentation result--------------------------------------------%
     display = 1;
@@ -52,9 +60,16 @@ for f=1:length(data_files)
         imshow(I1);hold on
         gscatter(xy(1,:), xy(2,:), segmentation, [], [], 20);
         title('The first label in red is outlier label');
-        
     end
     drawnow;
     %-------------------------------------------------------------------------%
     
+end
+
+mean_err = mean(seg_errors, 2);
+median_err = median(seg_errors, 2);
+fprintf('\n');
+fprintf('%s \t %s \t %s \n', pad('Image', 50), 'Mean Error', 'Median Error');
+for f=1:length(data_files)
+    fprintf('%s \t %f \t %f \n', pad(data_files(f).name, 50), mean_err(f), median_err(f));
 end
