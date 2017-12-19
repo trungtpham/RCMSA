@@ -51,8 +51,6 @@ This program also makes use of Peter Kovesi and Andrew Zisserman's MATLAB functi
 ---------------
 2. Run examples
 ---------------
-* Run homo_est.m for example multiple planar homography detection.
-* Run funda_est.m for example multiple 2-view motion segmentation.
 * Run homo_eval.m to test the method using AdelaideRMF dataset.
 * Run funda_eval.m to test the method using AdelaideRMF dataset.
 
