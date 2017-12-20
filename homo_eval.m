@@ -54,7 +54,7 @@ for f=1:length(data_files)
     %-------------------------------------------------------------------------%
     
     %--Display segmentation result--------------------------------------------%
-    display = 1;
+    display = 0;
     if display == 1
         figure(f);
         imshow(I1);hold on

@@ -9,7 +9,7 @@ data_path = 'data/AdelaideRMF/F';
 
 data_files = dir(data_path);
 data_files(1:2) = [];
-num_repetitions = 100;
+num_repetitions = 1;
 seg_errors = zeros(length(data_files), num_repetitions);
 
 
@@ -33,8 +33,8 @@ for f=1:length(data_files)
     
     
     %----------Set parameters-------------------------------------------------%
-    param.sig = 0.001;            % Standard deviation of noise
-    param.smoothness = 0.25;      % Smoothness cost
+    param.sig = 0.002;            % Standard deviation of noise
+    param.smoothness = 0.2;      % Smoothness cost
     param.min_inliers = 10;       % Minimum number of inlier per structure
     param.rcm_sampling = 1;       % Used RCM sampling method
     param.sa    = 0.99;           % Simulated Annealing Schedule
@@ -54,7 +54,7 @@ for f=1:length(data_files)
     %-------------------------------------------------------------------------%
     
     %--Display segmentation result--------------------------------------------%
-    display = 0;
+    display = 1;
     if display == 1
         figure(f);
         imshow(I1);hold on

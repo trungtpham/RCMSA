@@ -11,9 +11,10 @@ function [label, eng, pcost] = get_labels(graph, datacost, smoothcost)
 
 
 % energy scale required by GCO
-energy_scale = 1e2;
+energy_scale = 1e3;
 
 % Make squared residual
+datacost = min(datacost, 2);
 datacost = datacost.^2;
 
 smoothcost = min(1e7, smoothcost.*energy_scale);

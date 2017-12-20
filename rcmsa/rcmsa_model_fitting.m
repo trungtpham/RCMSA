@@ -20,7 +20,7 @@ function [epar, elabel, energy] = rcmsa_model_fitting(data, xy, model_type, para
 
 
 %---Compute model complexity beta parameter-------------------------------%
-param.bet = 1.25*param.min_inliers;
+param.bet = 1.2*param.min_inliers;
 
 %------Get model parameters-----------------------------------------------%
 [fitfn, resfn, degenfn, psize, numpar] = getModelPara(model_type);
@@ -65,7 +65,7 @@ epar       = [];           % Estimated paramters
 
 %--------Simulated annealing to minimise energy---------------------------%
 % Inited temperature 
-T = 200;
+T = 10;
 
 % Loop through a number of iteration
 %cpu_time = [];
@@ -126,7 +126,7 @@ for m=1:M
     
     % Extract labels based on alpha_expansion method
     [f_temp, J_temp, pcost] = get_labels(Weights, dcost_temp, smoothcost);
-    
+   
     % Compute the new energy
     J_temp = double(J_temp + numm_temp*param.bet);
     
