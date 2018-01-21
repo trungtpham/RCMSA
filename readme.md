@@ -9,7 +9,7 @@ In Proc. IEEE Conf. on Computer Vision and Pattern Recognition (CVPR),  Providen
 
 T. T. Pham, T.-J. Chin, J. Yu and D. Suter
 The Random Cluster Model for Robust Geometric Fitting
-IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI).
+IEEE Transactions on Pattern Analysis and Machine Intelligence (TPAMI), 2014.
 
 Related papers:
 
@@ -29,7 +29,7 @@ http://www.cs.adelaide.edu.au/~{trung,tjchin}
 If you encounter any issues with the code, please feel free to contact me at:
 trung.pham@adelaide.edu.au
 
-Last updated: 15 Dec 2017.
+Last updated: 22 Jan 2018.
 
 ----------------------------
 0. Libraries
@@ -49,7 +49,7 @@ This program also makes use of Peter Kovesi and Andrew Zisserman's MATLAB functi
 * Run make.m file.
 
 ---------------
-2. Run examples
+2. Run evaluation
 ---------------
 * Run homo_eval.m to test the method using AdelaideRMF dataset.
 * Run funda_eval.m to test the method using AdelaideRMF dataset.
